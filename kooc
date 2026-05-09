@@ -17,23 +17,7 @@ KOOC_DIR="$HOME/.kooc"
 URLS_FILE="$KOOC_DIR/urls"
 mkdir -p "$KOOC_DIR"
 
-clear
-
-# ── Banner ────────────────────────────────────────────────────────────────────
-echo ""
-echo -e "${BOLD}${CYAN}   ██╗  ██╗ ██████╗  ██████╗  ██████╗${RESET}"
-echo -e "${BOLD}${CYAN}   ██║ ██╔╝██╔═══██╗██╔═══██╗██╔════╝${RESET}"
-echo -e "${BOLD}${CYAN}   █████╔╝ ██║   ██║██║   ██║██║     ${RESET}"
-echo -e "${BOLD}${CYAN}   ██╔═██╗ ██║   ██║██║   ██║██║     ${RESET}"
-echo -e "${BOLD}${CYAN}   ██║  ██╗╚██████╔╝╚██████╔╝╚██████╗${RESET}"
-echo -e "${BOLD}${CYAN}   ╚═╝  ╚═╝ ╚═════╝  ╚═════╝  ╚═════╝${RESET}"
-echo ""
-echo -e "${GREY}   Kaggle · Ollama · OpenCode${RESET}"
-echo ""
-echo -e "${GREY}   ────────────────────────────────────────${RESET}"
-echo ""
-
-# ── URL selection ─────────────────────────────────────────────────────────────
+# ── Load saved URLs (once) ────────────────────────────────────────────────────
 SAVED_URLS=()
 if [[ -f "$URLS_FILE" ]]; then
   while IFS= read -r url; do
@@ -41,87 +25,97 @@ if [[ -f "$URLS_FILE" ]]; then
   done < "$URLS_FILE"
 fi
 
-IS_NEW_URL=false
+# ── URL selection + connection loop ───────────────────────────────────────────
+while true; do
+  clear
 
-if [[ ${#SAVED_URLS[@]} -gt 0 ]]; then
-  CHOICE=$(printf '%s\n' \
-    "[ + Enter new URL ]" \
-    "[ × Delete a URL  ]" \
-    "${SAVED_URLS[@]}" | fzf \
-    --prompt="   URL: " \
-    --pointer="▶" \
-    --highlight-line \
-    --no-info \
-    --no-sort \
-    --height=$((${#SAVED_URLS[@]} + 8)) \
-    --color="fg:#aaaaaa,fg+:#00d7ff,bg+:#282a36,pointer:#f8f8f2,prompt:#f1fa8c,hl+:#00d7ff" \
-    --border=rounded \
-    --margin=1,3)
+  echo ""
+  echo -e "${BOLD}${CYAN}   ██╗  ██╗ ██████╗  ██████╗  ██████╗${RESET}"
+  echo -e "${BOLD}${CYAN}   ██║ ██╔╝██╔═══██╗██╔═══██╗██╔════╝${RESET}"
+  echo -e "${BOLD}${CYAN}   █████╔╝ ██║   ██║██║   ██║██║     ${RESET}"
+  echo -e "${BOLD}${CYAN}   ██╔═██╗ ██║   ██║██║   ██║██║     ${RESET}"
+  echo -e "${BOLD}${CYAN}   ██║  ██╗╚██████╔╝╚██████╔╝╚██████╗${RESET}"
+  echo -e "${BOLD}${CYAN}   ╚═╝  ╚═╝ ╚═════╝  ╚═════╝  ╚═════╝${RESET}"
+  echo ""
+  echo -e "${GREY}   Kaggle · Ollama · OpenCode${RESET}"
+  echo ""
+  echo -e "${GREY}   ────────────────────────────────────────${RESET}"
+  echo ""
 
-  [[ -z "$CHOICE" ]] && exit 0
+  IS_NEW_URL=false
 
-  if [[ "$CHOICE" == "[ + Enter new URL ]" ]]; then
-    echo -e "   ${YELLOW}Kaggle URL:${RESET}"
-    echo -ne "   ${YELLOW}▶ ${RESET}"
-    read -r KAGGLE_URL
-    IS_NEW_URL=true
-  elif [[ "$CHOICE" == "[ × Delete a URL  ]" ]]; then
-    DEL=$(printf '%s\n' "${SAVED_URLS[@]}" | fzf \
-      --prompt="   Delete: " \
+  if [[ ${#SAVED_URLS[@]} -gt 0 ]]; then
+    CHOICE=$(printf '%s\n' \
+      "[ + Enter new URL ]" \
+      "[ × Delete a URL  ]" \
+      "${SAVED_URLS[@]}" | fzf \
+      --prompt="   URL: " \
       --pointer="▶" \
       --highlight-line \
       --no-info \
       --no-sort \
-      --height=$((${#SAVED_URLS[@]} + 4)) \
-      --color="fg:#aaaaaa,fg+:#ff5555,bg+:#282a36,pointer:#ff5555,prompt:#ff5555,hl+:#ff5555" \
+      --height=$((${#SAVED_URLS[@]} + 8)) \
+      --color="fg:#aaaaaa,fg+:#00d7ff,bg+:#282a36,pointer:#f8f8f2,prompt:#f1fa8c,hl+:#00d7ff" \
       --border=rounded \
       --margin=1,3)
-    if [[ -n "$DEL" ]]; then
-      grep -vxF "$DEL" "$URLS_FILE" > "$URLS_FILE.tmp"; mv "$URLS_FILE.tmp" "$URLS_FILE"
-      echo ""
-      echo -e "   ${GREEN}✓ Deleted:${RESET} ${GREY}${DEL}${RESET}"
-      echo ""
+
+    [[ -z "$CHOICE" ]] && exit 0
+
+    if [[ "$CHOICE" == "[ + Enter new URL ]" ]]; then
+      echo -e "   ${YELLOW}Kaggle URL:${RESET}"
+      echo -ne "   ${YELLOW}▶ ${RESET}"
+      read -r KAGGLE_URL
+      IS_NEW_URL=true
+    elif [[ "$CHOICE" == "[ × Delete a URL  ]" ]]; then
+      DEL=$(printf '%s\n' "${SAVED_URLS[@]}" | fzf \
+        --prompt="   Delete: " \
+        --pointer="▶" \
+        --highlight-line \
+        --no-info \
+        --no-sort \
+        --height=$((${#SAVED_URLS[@]} + 4)) \
+        --color="fg:#aaaaaa,fg+:#ff5555,bg+:#282a36,pointer:#ff5555,prompt:#ff5555,hl+:#ff5555" \
+        --border=rounded \
+        --margin=1,3)
+      if [[ -n "$DEL" ]]; then
+        grep -vxF "$DEL" "$URLS_FILE" > "$URLS_FILE.tmp"; mv "$URLS_FILE.tmp" "$URLS_FILE"
+        echo ""
+        echo -e "   ${GREEN}✓ Deleted:${RESET} ${GREY}${DEL}${RESET}"
+        echo ""
+      fi
+      exit 0
+    else
+      KAGGLE_URL="$CHOICE"
     fi
-    exit 0
   else
-    KAGGLE_URL="$CHOICE"
+    echo -e "   ${YELLOW}Kaggle URL:${RESET}"
+    echo -ne "   ${YELLOW}▶ ${RESET}"
+    read -r KAGGLE_URL
+    IS_NEW_URL=true
   fi
-else
-  echo -e "   ${YELLOW}Kaggle URL:${RESET}"
-  echo -ne "   ${YELLOW}▶ ${RESET}"
-  read -r KAGGLE_URL
-  IS_NEW_URL=true
-fi
 
-if [[ -z "$KAGGLE_URL" ]]; then
-  echo -e "\n   ${RED}✗ No URL provided. Exiting.${RESET}\n"
-  exit 1
-fi
+  if [[ -z "$KAGGLE_URL" ]]; then
+    echo -e "\n   ${RED}✗ No URL provided. Exiting.${RESET}\n"
+    exit 1
+  fi
 
-KAGGLE_URL="${KAGGLE_URL%/}"
+  KAGGLE_URL="${KAGGLE_URL%/}"
 
-echo ""
-echo -e "   ${GREY}Connecting to ${DIM}${KAGGLE_URL}${RESET}${GREY}...${RESET}"
-echo ""
+  echo ""
+  echo -e "   ${GREY}Connecting to ${DIM}${KAGGLE_URL}${RESET}${GREY}...${RESET}"
+  echo ""
 
-# ── Fetch models ──────────────────────────────────────────────────────────────
-RAW=$(OLLAMA_HOST="$KAGGLE_URL" ollama list 2>&1)
+  RAW=$(OLLAMA_HOST="$KAGGLE_URL" ollama list 2>&1)
 
-if echo "$RAW" | grep -qi "error\|refused\|could not\|failed"; then
-  echo -e "   ${RED}✗ Could not reach Ollama at ${KAGGLE_URL}${RESET}"
-  echo -e "   ${GREY}Is your Kaggle session running?${RESET}\n"
-  exit 1
-fi
+  if echo "$RAW" | grep -qi "error\|refused\|could not\|failed"; then
+    echo -e "   ${RED}✗ Could not reach Ollama at ${KAGGLE_URL}${RESET}"
+    echo -e "   ${GREY}Is your Kaggle session running?${RESET}"
+    sleep 1
+    continue
+  fi
 
-MODELS=()
-while IFS= read -r line; do
-  [[ -n "$line" ]] && MODELS+=("$line")
-done < <(echo "$RAW" | tail -n +2 | awk '{print $1}' | grep -v '^$')
-
-if [[ ${#MODELS[@]} -eq 0 ]]; then
-  echo -e "   ${RED}✗ No models found.${RESET}\n"
-  exit 1
-fi
+  break
+done
 
 # ── Offer to save new URL ─────────────────────────────────────────────────────
 if [[ "$IS_NEW_URL" == true ]]; then
@@ -132,6 +126,17 @@ if [[ "$IS_NEW_URL" == true ]]; then
     echo -e "   ${GREEN}✓ Saved${RESET}"
   fi
   echo ""
+fi
+
+# ── Parse models ──────────────────────────────────────────────────────────────
+MODELS=()
+while IFS= read -r line; do
+  [[ -n "$line" ]] && MODELS+=("$line")
+done < <(echo "$RAW" | tail -n +2 | awk '{print $1}' | grep -v '^$')
+
+if [[ ${#MODELS[@]} -eq 0 ]]; then
+  echo -e "   ${RED}✗ No models found.${RESET}\n"
+  exit 1
 fi
 
 # ── Display & select ──────────────────────────────────────────────────────────
