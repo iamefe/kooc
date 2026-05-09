@@ -11,7 +11,7 @@
 
    ────────────────────────────────────────
 
-   Kaggle URL (Enter to use: https://your-url.trycloudflare.com)
+   Kaggle URL:
    ▶ _
 ```
 
@@ -88,11 +88,11 @@ You'll see an interactive prompt:
    ╚═╝  ╚═╝ ╚═════╝  ╚═════╝  ╚═════╝
    Kaggle · Ollama · OpenCode
 
-   Kaggle URL (Enter to use: https://your-url.trycloudflare.com)
+   Kaggle URL:
    ▶ _
 ```
 
-Hit **Enter** to use the pre-filled URL (from `$KAGGLE_URL`), or paste a new one. Then pick a model from the `fzf` list and OpenCode launches.
+Paste your Cloudflare tunnel URL and hit **Enter**. Then pick a model from the `fzf` list and OpenCode launches.
 
 ---
 
