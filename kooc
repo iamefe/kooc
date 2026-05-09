@@ -110,7 +110,7 @@ while true; do
   if echo "$RAW" | grep -qi "error\|refused\|could not\|failed"; then
     echo -e "   ${RED}✗ Could not reach Ollama at ${KAGGLE_URL}${RESET}"
     echo -e "   ${GREY}Is your Kaggle session running?${RESET}"
-    sleep 1
+    sleep 2
     continue
   fi
 
