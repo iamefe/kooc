@@ -97,15 +97,13 @@ Paste your tunnel URL (Cloudflare, ngrok, etc.) and hit **Enter**. Then pick a m
 
 ## Kaggle setup
 
-`kooc` is designed to work with a Kaggle notebook that runs Ollama on a T4×2 GPU and exposes it via a tunnel (Cloudflare, ngrok, or any provider). See the companion notebook:
+`kooc` works with any Kaggle notebook that runs Ollama on a GPU and exposes it via a tunnel (Cloudflare, ngrok, or any provider).
 
-[`ai-automation/docs/notebooks/ollama-t4.ipynb`](https://github.com/iamefe/ai-automation/blob/main/docs/notebooks/ollama-t4.ipynb)
-
-The notebook:
-- Downloads and starts Ollama with T4×2 optimizations (flash attention, quantized KV cache, dual GPU)
-- Opens a Cloudflare tunnel to port 11434
-- Pulls and pre-warms your chosen model into VRAM
-- Prints the tunnel URL to use with `kooc`
+A typical setup notebook will:
+- Download and start Ollama (optionally with multi-GPU and flash attention flags)
+- Open a tunnel to port 11434
+- Pull and pre-warm your chosen model into VRAM
+- Print the tunnel URL to paste into `kooc`
 
 ---
 
