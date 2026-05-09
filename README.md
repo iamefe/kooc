@@ -8,6 +8,11 @@
    ██║  ██╗╚██████╔╝╚██████╔╝╚██████╗
    ╚═╝  ╚═╝ ╚═════╝  ╚═════╝  ╚═════╝
    Kaggle · Ollama · OpenCode
+
+   ────────────────────────────────────────
+
+   Kaggle URL (Enter to use: https://your-url.trycloudflare.com)
+   ▶ _
 ```
 
 
