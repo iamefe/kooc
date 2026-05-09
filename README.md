@@ -91,13 +91,13 @@ You'll see an interactive prompt:
    ▶ _
 ```
 
-Paste your Cloudflare tunnel URL and hit **Enter**. Then pick a model from the `fzf` list and OpenCode launches.
+Paste your tunnel URL (Cloudflare, ngrok, etc.) and hit **Enter**. Then pick a model from the `fzf` list and OpenCode launches.
 
 ---
 
 ## Kaggle setup
 
-`kooc` is designed to work with a Kaggle notebook that runs Ollama on a T4×2 GPU and exposes it via a Cloudflare tunnel. See the companion notebook:
+`kooc` is designed to work with a Kaggle notebook that runs Ollama on a T4×2 GPU and exposes it via a tunnel (Cloudflare, ngrok, or any provider). See the companion notebook:
 
 [`ai-automation/docs/notebooks/ollama-t4.ipynb`](https://github.com/iamefe/ai-automation/blob/main/docs/notebooks/ollama-t4.ipynb)
 
