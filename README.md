@@ -54,18 +54,17 @@ Kaggle GPU (T4×2)
 ## Install
 
 ```bash
-# Clone the toolbox (if you haven't)
-git clone https://github.com/iamefe/toolbox ~/toolbox
+git clone https://github.com/iamefe/kooc ~/kooc
 
-# Symlink kooc to somewhere on your PATH
-ln -s ~/toolbox/kooc/kooc ~/.local/bin/kooc
+# Symlink to somewhere on your PATH
+ln -s ~/kooc/kooc ~/.local/bin/kooc
 chmod +x ~/.local/bin/kooc
 ```
 
 Or copy it directly:
 
 ```bash
-cp ~/toolbox/kooc/kooc /usr/local/bin/kooc
+cp ~/kooc/kooc /usr/local/bin/kooc
 chmod +x /usr/local/bin/kooc
 ```
 
