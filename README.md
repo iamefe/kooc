@@ -80,19 +80,6 @@ Hit **Enter** to use the pre-filled URL (from `$KAGGLE_URL`), or paste a new one
 
 ---
 
-## Environment variable
-
-Set `KAGGLE_URL` in your shell config so `kooc` pre-fills it automatically:
-
-```bash
-# ~/.zshrc or ~/.bashrc
-export KAGGLE_URL=https://your-tunnel-url.trycloudflare.com
-```
-
-Since Cloudflare tunnel URLs change every Kaggle session, update this after each session start — or just paste the new URL at the prompt.
-
----
-
 ## Kaggle setup
 
 `kooc` is designed to work with a Kaggle notebook that runs Ollama on a T4×2 GPU and exposes it via a Cloudflare tunnel. See the companion notebook:
