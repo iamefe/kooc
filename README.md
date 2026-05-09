@@ -1,8 +1,15 @@
-<p align="center">
-  <img src="banner.svg" alt="kooc banner" width="560"/>
-</p>
-
 # kooc — Kaggle OpenCode Launcher
+
+```ansi
+[36m   ██╗  ██╗ ██████╗  ██████╗  ██████╗[0m
+[36m   ██║ ██╔╝██╔═══██╗██╔═══██╗██╔════╝[0m
+[36m   █████╔╝ ██║   ██║██║   ██║██║     [0m
+[36m   ██╔═██╗ ██║   ██║██║   ██║██║     [0m
+[36m   ██║  ██╗╚██████╔╝╚██████╔╝╚██████╗[0m
+[36m   ╚═╝  ╚═╝ ╚═════╝  ╚═════╝  ╚═════╝[0m
+[2m   Kaggle · Ollama · OpenCode[0m
+```
+
 
 A colorful interactive terminal launcher that connects to a remote [Ollama](https://ollama.com) instance running on a Kaggle GPU, lets you pick a model with arrow keys, and launches [OpenCode](https://opencode.ai) against it.
 
