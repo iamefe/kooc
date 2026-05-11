@@ -32,6 +32,8 @@ fi
 # ── URL selection + connection loop ───────────────────────────────────────────
 while true; do
   clear
+  echo ""
+  echo ""
 
   echo ""
   echo -e "${BOLD}${CYAN}   ██╗  ██╗ ██████╗  ██████╗  ██████╗${RESET}"
@@ -51,14 +53,15 @@ while true; do
   if [[ ${#SAVED_URLS[@]} -gt 0 ]]; then
     CHOICE=$(printf '%s\n' \
       "[ + Enter new URL ]" \
-      "${SAVED_URLS[@]}" \
-      "[ × Delete a URL  ]" | fzf \
+      "[ × Delete a URL  ]" \
+      "${SAVED_URLS[@]}" | fzf \
       --prompt="   URL: " \
       --pointer="▶" \
       --highlight-line \
       --no-info \
       --no-sort \
       --height=$((${#SAVED_URLS[@]} + 8)) \
+      --layout=reverse \
       --color="fg:#aaaaaa,fg+:#00d7ff,bg+:#282a36,pointer:#f8f8f2,prompt:#f1fa8c,hl+:#00d7ff" \
       --border=rounded \
       --margin=1,3)
@@ -78,6 +81,7 @@ while true; do
         --no-info \
         --no-sort \
         --height=$((${#SAVED_URLS[@]} + 4)) \
+        --layout=reverse \
         --color="fg:#aaaaaa,fg+:#ff5555,bg+:#282a36,pointer:#ff5555,prompt:#ff5555,hl+:#ff5555" \
         --border=rounded \
         --margin=1,3)
@@ -206,6 +210,8 @@ case "$AGENT" in
     echo -e "   ${GREY}Launching Claude Code...${RESET}"
     echo ""
     clear
+    echo ""
+    echo ""
     ollama launch claude --model "$SELECTED_MODEL"
     ;;
 esac
