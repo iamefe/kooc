@@ -51,8 +51,8 @@ while true; do
   if [[ ${#SAVED_URLS[@]} -gt 0 ]]; then
     CHOICE=$(printf '%s\n' \
       "[ + Enter new URL ]" \
-      "[ × Delete a URL  ]" \
-      "${SAVED_URLS[@]}" | fzf \
+      "${SAVED_URLS[@]}" \
+      "[ × Delete a URL  ]" | fzf \
       --prompt="   URL: " \
       --pointer="▶" \
       --highlight-line \
@@ -205,6 +205,7 @@ case "$AGENT" in
   "Claude Code")
     echo -e "   ${GREY}Launching Claude Code...${RESET}"
     echo ""
+    clear
     ollama launch claude --model "$SELECTED_MODEL"
     ;;
 esac
