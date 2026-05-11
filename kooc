@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# kooc — Kaggle OpenCode launcher
+# kooc — Agent launcher (OpenCode, Claude Code, ...)
+# Picks agent → connects to Kaggle Ollama → picks model → launches
 
-# ── Colors ────────────────────────────────────────────────────────────────────
+# ── Colors ───────────────────────────────────────────────────────────────────────
 RESET='\033[0m'
 BOLD='\033[1m'
 DIM='\033[2m'
@@ -11,6 +12,9 @@ YELLOW='\033[38;5;220m'
 GREEN='\033[38;5;82m'
 RED='\033[38;5;196m'
 GREY='\033[38;5;242m'
+
+# ── Agents ─────────────────────────────────────────────────────────────────────
+AGENTS=("OpenCode" "Claude Code")
 
 # ── Storage ───────────────────────────────────────────────────────────────────
 KOOC_DIR="$HOME/.kooc"
@@ -37,7 +41,7 @@ while true; do
   echo -e "${BOLD}${CYAN}   ██║  ██╗╚██████╔╝╚██████╔╝╚██████╗${RESET}"
   echo -e "${BOLD}${CYAN}   ╚═╝  ╚═╝ ╚═════╝  ╚═════╝  ╚═════╝${RESET}"
   echo ""
-  echo -e "${GREY}   Kaggle · Ollama · OpenCode${RESET}"
+  echo -e "${GREY}   Kaggle · Ollama · Claude / OpenCode${RESET}"
   echo ""
   echo -e "${GREY}   ────────────────────────────────────────${RESET}"
   echo ""
@@ -139,12 +143,12 @@ if [[ ${#MODELS[@]} -eq 0 ]]; then
   exit 1
 fi
 
-# ── Display & select ──────────────────────────────────────────────────────────
+# ── Display & select model ──────────────────────────────────────────────────────
 echo -e "   ${CYAN}${BOLD}Available Models${RESET}  ${GREY}(↑↓ to move, Enter to select)${RESET}"
 echo -e "   ${GREY}────────────────────────────────────────${RESET}"
 echo ""
 
-SELECTED=$(printf '%s\n' "${MODELS[@]}" | fzf \
+SELECTED_MODEL=$(printf '%s\n' "${MODELS[@]}" | fzf \
   --prompt="   Model: " \
   --pointer="▶" \
   --highlight-line \
@@ -155,17 +159,52 @@ SELECTED=$(printf '%s\n' "${MODELS[@]}" | fzf \
   --border=rounded \
   --margin=1,3)
 
-if [[ -z "$SELECTED" ]]; then
+if [[ -z "$SELECTED_MODEL" ]]; then
   echo -e "   ${RED}✗ No model selected.${RESET}\n"
   exit 1
 fi
 
+# ── Agent picker ───────────────────────────────────────────────────────────────
 echo ""
+echo -e "   ${MAGENTA}${BOLD}Select Agent${RESET}  ${GREY}(↑↓ to move, Enter to select)${RESET}"
 echo -e "   ${GREY}────────────────────────────────────────${RESET}"
 echo ""
-echo -e "   ${GREEN}${BOLD}✓ ${SELECTED}${RESET}"
-echo -e "   ${GREY}Launching OpenCode...${RESET}"
+
+AGENT=$(printf '%s\n' "${AGENTS[@]}" | fzf \
+  --prompt="   Agent: " \
+  --pointer="▶" \
+  --highlight-line \
+  --no-info \
+  --no-sort \
+  --height=$((${#AGENTS[@]} + 4)) \
+  --color="fg:#aaaaaa,fg+:#ff79c6,bg+:#282a36,pointer:#f8f8f2,prompt:#f1fa8c,hl+:#50fa7b" \
+  --border=rounded \
+  --margin=1,3)
+
+if [[ -z "$AGENT" ]]; then
+  echo -e "   ${RED}✗ No agent selected.${RESET}\n"
+  exit 1
+fi
+
+echo ""
+echo -e "   ${GREY}─────────────────────────────────────${RESET}"
+echo ""
+echo -e "   ${GREEN}${BOLD}✓ ${AGENT}${RESET}  +  ${GREEN}${BOLD}✓ ${SELECTED_MODEL}${RESET}"
 echo ""
 
-# ── Launch ────────────────────────────────────────────────────────────────────
-OLLAMA_HOST="$KAGGLE_URL" ollama launch opencode --model "$SELECTED"
+# ── Launch ─────────────────────────────────────────────────────────────────
+OLLAMA_HOST="$KAGGLE_URL"
+export OLLAMA_HOST
+
+case "$AGENT" in
+  "OpenCode")
+    echo -e "   ${GREY}Launching OpenCode...${RESET}"
+    echo ""
+    ollama launch opencode --model "$SELECTED_MODEL"
+    ;;
+  "Claude Code")
+    echo -e "   ${GREY}Launching Claude Code...${RESET}"
+    echo ""
+    ollama launch claude --model "$SELECTED_MODEL"
+    ;;
+esac
