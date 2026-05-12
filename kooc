@@ -43,7 +43,7 @@ while true; do
   echo -e "${BOLD}${CYAN}   ██║  ██╗╚██████╔╝╚██████╔╝╚██████╗${RESET}"
   echo -e "${BOLD}${CYAN}   ╚═╝  ╚═╝ ╚═════╝  ╚═════╝  ╚═════╝${RESET}"
   echo ""
-  echo -e "${GREY}   Kaggle · Ollama · Claude / OpenCode${RESET}"
+  echo -e "${GREY}   Kaggle · Ollama · OpenCode / Claude${RESET}"
   echo ""
   echo -e "${GREY}   ────────────────────────────────────────${RESET}"
   echo ""
@@ -91,7 +91,7 @@ while true; do
         echo -e "   ${GREEN}✓ Deleted:${RESET} ${GREY}${DEL}${RESET}"
         echo ""
       fi
-      exit 0
+      continue
     else
       KAGGLE_URL="$CHOICE"
     fi

@@ -84,7 +84,7 @@ You'll see an interactive prompt:
    ██╔═██╗ ██║   ██║██║   ██║██║
    ██║  ██╗╚██████╔╝╚██████╔╝╚██████╗
    ╚═╝  ╚═╝ ╚═════╝  ╚═════╝  ╚═════╝
-   Kaggle · Ollama · Claude / OpenCode
+   Kaggle · Ollama · OpenCode / Claude
 
    Kaggle URL:
    ▶ _
