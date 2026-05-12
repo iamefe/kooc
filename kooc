@@ -88,6 +88,13 @@ while true; do
       if [[ -n "$DEL" ]]; then
         grep -vxF "$DEL" "$URLS_FILE" > "$URLS_FILE.tmp"; mv "$URLS_FILE.tmp" "$URLS_FILE"
         echo ""
+        grep -vxF "$DEL" "$URLS_FILE" > "$URLS_FILE.tmp" && mv "$URLS_FILE.tmp" "$URLS_FILE"
+        SAVED_URLS=()
+        if [[ -f "$URLS_FILE" ]]; then
+          while IFS= read -r url; do
+            [[ -n "$url" ]] && SAVED_URLS+=("$url")
+          done < "$URLS_FILE"
+        fi
         echo -e "   ${GREEN}✓ Deleted:${RESET} ${GREY}${DEL}${RESET}"
         echo ""
       fi
