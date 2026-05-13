@@ -14,7 +14,7 @@ RED='\033[38;5;196m'
 GREY='\033[38;5;242m'
 
 # ── Agents ─────────────────────────────────────────────────────────────────────
-AGENTS=("Claude Code" "OpenCode" "Ollama TUI")
+AGENTS=("Claude Code" "Opencode (direct)" "Opencode (Ollama)" "Ollama TUI")
 
 # ── Storage ───────────────────────────────────────────────────────────────────
 KOOC_DIR="$HOME/.kooc"
@@ -143,37 +143,6 @@ if [[ "$IS_NEW_URL" == true ]]; then
   echo ""
 fi
 
-# ── Parse models ──────────────────────────────────────────────────────────────
-MODELS=()
-while IFS= read -r line; do
-  [[ -n "$line" ]] && MODELS+=("$line")
-done < <(echo "$RAW" | tail -n +2 | awk '{print $1}' | grep -v '^$')
-
-if [[ ${#MODELS[@]} -eq 0 ]]; then
-  echo -e "   ${RED}✗ No models found.${RESET}\n"
-  exit 1
-fi
-
-# ── Display & select model ──────────────────────────────────────────────────────
-echo -e "   ${CYAN}${BOLD}Available Models${RESET}  ${GREY}(↑↓ to move, Enter to select)${RESET}"
-echo -e "   ${GREY}────────────────────────────────────────${RESET}"
-
-SELECTED_MODEL=$(printf '%s\n' "${MODELS[@]}" | fzf \
-  --prompt="   Model: " \
-  --pointer="▶" \
-  --highlight-line \
-  --no-info \
-  --no-sort \
-  --height=8 \
-  --color="fg:#aaaaaa,fg+:#ff79c6,bg+:#282a36,pointer:#f8f8f2,prompt:#f1fa8c,hl+:#50fa7b" \
-  --border=rounded \
-  --margin=0,3)
-
-if [[ -z "$SELECTED_MODEL" ]]; then
-  echo -e "   ${RED}✗ No model selected.${RESET}\n"
-  exit 1
-fi
-
 # ── Agent picker ───────────────────────────────────────────────────────────────
 echo ""
 echo -e "   ${MAGENTA}${BOLD}Select Agent${RESET}  ${GREY}(↑↓ to move, Enter to select)${RESET}"
@@ -196,10 +165,52 @@ if [[ -z "$AGENT" ]]; then
   exit 1
 fi
 
+# ── Model picker (only for agents that need it) ────────────────────────────────
+SELECTED_MODEL=""
+NEEDS_MODEL=false
+if [[ "$AGENT" == "Claude Code" || "$AGENT" == "Opencode (Ollama)" || "$AGENT" == "Ollama TUI" ]]; then
+  NEEDS_MODEL=true
+
+  # ── Parse models ──
+  MODELS=()
+  while IFS= read -r line; do
+    [[ -n "$line" ]] && MODELS+=("$line")
+  done < <(echo "$RAW" | tail -n +2 | awk '{print $1}' | grep -v '^$')
+
+  if [[ ${#MODELS[@]} -eq 0 ]]; then
+    echo -e "   ${RED}✗ No models found.${RESET}\n"
+    exit 1
+  fi
+
+  echo -e "   ${CYAN}${BOLD}Available Models${RESET}  ${GREY}(↑↓ to move, Enter to select)${RESET}"
+  echo -e "   ${GREY}────────────────────────────────────────${RESET}"
+
+  SELECTED_MODEL=$(printf '%s\n' "${MODELS[@]}" | fzf \
+    --prompt="   Model: " \
+    --pointer="▶" \
+    --highlight-line \
+    --no-info \
+    --no-sort \
+    --height=8 \
+    --color="fg:#aaaaaa,fg+:#ff79c6,bg+:#282a36,pointer:#f8f8f2,prompt:#f1fa8c,hl+:#50fa7b" \
+    --border=rounded \
+    --margin=0,3)
+
+  if [[ -z "$SELECTED_MODEL" ]]; then
+    echo -e "   ${RED}✗ No model selected.${RESET}\n"
+    exit 1
+  fi
+fi
+
+# ── Summary ──
 echo ""
 echo -e "   ${GREY}─────────────────────────────────────${RESET}"
 echo ""
-echo -e "   ${GREEN}${BOLD}✓ ${AGENT}${RESET}  +  ${GREEN}${BOLD}✓ ${SELECTED_MODEL}${RESET}"
+if [[ -n "$SELECTED_MODEL" ]]; then
+  echo -e "   ${GREEN}${BOLD}✓ ${AGENT}${RESET}  +  ${GREEN}${BOLD}✓ ${SELECTED_MODEL}${RESET}"
+else
+  echo -e "   ${GREEN}${BOLD}✓ ${AGENT}${RESET}"
+fi
 echo ""
 
 # ── Thinking toggle for Ollama TUI ──
@@ -230,8 +241,13 @@ OLLAMA_HOST="$KAGGLE_URL"
 export OLLAMA_HOST
 
 case "$AGENT" in
-  "OpenCode")
-    echo -e "   ${GREY}Launching OpenCode...${RESET}"
+  "Opencode (Ollama)")
+    echo -e "   ${GREY}Launching Opencode via Ollama...${RESET}"
+    echo ""
+    ollama launch opencode --model "$SELECTED_MODEL"
+    ;;
+  "Opencode (direct)")
+    echo -e "   ${GREY}Launching Opencode...${RESET}"
     echo ""
     opencode
     ;;
@@ -246,6 +262,6 @@ case "$AGENT" in
   "Ollama TUI")
     echo -e "   ${GREY}Launching Ollama TUI with thinking=${THINK}...${RESET}"
     echo ""
-    ollama run "$SELECTED_MODEL" --think=$THINK
+    ollama run "$SELECTED_MODEL" --thinking=true
     ;;
 esac
