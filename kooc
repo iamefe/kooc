@@ -220,7 +220,7 @@ if [[ "$AGENT" == "Ollama TUI" ]]; then
   echo -e "   ${GREY}─────────────────────────────────────────────${RESET}"
   echo ""
 
-  THINK=$(printf '%s\n' "Enable thinking" "Disable thinking" | fzf \
+  THINK_CHOICE=$(printf '%s\n' "Enable thinking" "Disable thinking" | fzf \
     --prompt="   Thinking: " \
     --pointer="▶" \
     --highlight-line \
@@ -231,7 +231,7 @@ if [[ "$AGENT" == "Ollama TUI" ]]; then
     --border=rounded \
     --margin=1,3)
 
-  if [[ "$THINK" == "Disable thinking" ]]; then
+  if [[ "$THINK_CHOICE" == "Disable thinking" ]]; then
     THINK=false
   fi
 fi
@@ -262,6 +262,6 @@ case "$AGENT" in
   "Ollama TUI")
     echo -e "   ${GREY}Launching Ollama TUI with thinking=${THINK}...${RESET}"
     echo ""
-    ollama run "$SELECTED_MODEL" --thinking=true
+    ollama run "$SELECTED_MODEL" --think=$THINK
     ;;
 esac
