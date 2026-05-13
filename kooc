@@ -14,7 +14,7 @@ RED='\033[38;5;196m'
 GREY='\033[38;5;242m'
 
 # ── Agents ─────────────────────────────────────────────────────────────────────
-AGENTS=("Claude Code" "OpenCode")
+AGENTS=("Claude Code" "OpenCode" "Ollama TUI")
 
 # ── Storage ───────────────────────────────────────────────────────────────────
 KOOC_DIR="$HOME/.kooc"
@@ -157,7 +157,6 @@ fi
 # ── Display & select model ──────────────────────────────────────────────────────
 echo -e "   ${CYAN}${BOLD}Available Models${RESET}  ${GREY}(↑↓ to move, Enter to select)${RESET}"
 echo -e "   ${GREY}────────────────────────────────────────${RESET}"
-echo ""
 
 SELECTED_MODEL=$(printf '%s\n' "${MODELS[@]}" | fzf \
   --prompt="   Model: " \
@@ -165,10 +164,10 @@ SELECTED_MODEL=$(printf '%s\n' "${MODELS[@]}" | fzf \
   --highlight-line \
   --no-info \
   --no-sort \
-  --height=$((${#MODELS[@]} + 4)) \
+  --height=8 \
   --color="fg:#aaaaaa,fg+:#ff79c6,bg+:#282a36,pointer:#f8f8f2,prompt:#f1fa8c,hl+:#50fa7b" \
   --border=rounded \
-  --margin=1,3)
+  --margin=0,3)
 
 if [[ -z "$SELECTED_MODEL" ]]; then
   echo -e "   ${RED}✗ No model selected.${RESET}\n"
@@ -187,7 +186,7 @@ AGENT=$(printf '%s\n' "${AGENTS[@]}" | fzf \
   --highlight-line \
   --no-info \
   --no-sort \
-  --height=$((${#AGENTS[@]} + 4)) \
+  --height=9 \
   --color="fg:#aaaaaa,fg+:#ff79c6,bg+:#282a36,pointer:#f8f8f2,prompt:#f1fa8c,hl+:#50fa7b" \
   --border=rounded \
   --margin=1,3)
@@ -202,6 +201,29 @@ echo -e "   ${GREY}────────────────────�
 echo ""
 echo -e "   ${GREEN}${BOLD}✓ ${AGENT}${RESET}  +  ${GREEN}${BOLD}✓ ${SELECTED_MODEL}${RESET}"
 echo ""
+
+# ── Thinking toggle for Ollama TUI ──
+THINK=true
+if [[ "$AGENT" == "Ollama TUI" ]]; then
+  echo -e "   ${MAGENTA}${BOLD}Thinking Mode${RESET}  ${GREY}(↑↓ to move, Enter to select)${RESET}"
+  echo -e "   ${GREY}─────────────────────────────────────────────${RESET}"
+  echo ""
+
+  THINK=$(printf '%s\n' "Enable thinking" "Disable thinking" | fzf \
+    --prompt="   Thinking: " \
+    --pointer="▶" \
+    --highlight-line \
+    --no-info \
+    --no-sort \
+    --height=8 \
+    --color="fg:#aaaaaa,fg+:#ff79c6,bg+:#282a36,pointer:#f8f8f2,prompt:#f1fa8c,hl+:#50fa7b" \
+    --border=rounded \
+    --margin=1,3)
+
+  if [[ "$THINK" == "Disable thinking" ]]; then
+    THINK=false
+  fi
+fi
 
 # ── Launch ─────────────────────────────────────────────────────────────────
 OLLAMA_HOST="$KAGGLE_URL"
@@ -220,5 +242,10 @@ case "$AGENT" in
     echo ""
     echo ""
     ollama launch claude --model "$SELECTED_MODEL"
+    ;;
+  "Ollama TUI")
+    echo -e "   ${GREY}Launching Ollama TUI with thinking=${THINK}...${RESET}"
+    echo ""
+    ollama run "$SELECTED_MODEL" --think=$THINK
     ;;
 esac
