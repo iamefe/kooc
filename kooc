@@ -236,6 +236,38 @@ if [[ "$AGENT" == "Ollama TUI" ]]; then
   fi
 fi
 
+# ── Validate Opencode config ──
+check_opencode_config() {
+  local config="$HOME/.config/opencode/opencode.json"
+
+  if [[ ! -f "$config" ]]; then
+    echo -e "   ${RED}✗ opencode.json not found${RESET}"
+    echo -e "   ${GREY}See the opencode.json sample at https://github.com/iamefe/kooc for the format we expect${RESET}"
+    return 1
+  fi
+
+  local base_url
+  base_url=$(sed '/^ *\/\//d' "$config" | jq -r '.provider.ollama.options.baseURL // empty' 2>/dev/null)
+
+  if [[ -z "$base_url" ]]; then
+    echo -e "   ${RED}✗ baseURL not found in opencode config${RESET}"
+    echo -e "   ${GREY}Expected ${CYAN}\"baseURL\": \"\${OLLAMA_HOST}/v1\"${RESET}"
+    echo -e "   ${GREY}See the opencode.json sample at https://github.com/iamefe/kooc for the format we expect${RESET}"
+    return 1
+  fi
+
+  # Accept either the literal placeholder or a resolved Ollama URL
+  if [[ "$base_url" != *'${OLLAMA_HOST}'* ]] && [[ "$base_url" != *"${OLLAMA_HOST}"* ]]; then
+    echo -e "   ${RED}✗ baseURL does not point to your Ollama instance${RESET}"
+    echo -e "   ${GREY}Found:${RESET} ${GREY}${base_url}${RESET}"
+    echo -e "   ${GREY}Expected:${RESET} ${CYAN}\${OLLAMA_HOST}/v1${RESET}"
+    echo -e "   ${GREY}See the opencode.json sample at https://github.com/iamefe/kooc for the format we expect${RESET}"
+    return 1
+  fi
+
+  return 0
+}
+
 # ── Launch ─────────────────────────────────────────────────────────────────
 OLLAMA_HOST="$KAGGLE_URL"
 export OLLAMA_HOST
@@ -247,6 +279,9 @@ case "$AGENT" in
     ollama launch opencode --model "$SELECTED_MODEL"
     ;;
   "Opencode (direct)")
+    if ! check_opencode_config; then
+      exit 1
+    fi
     echo -e "   ${GREY}Launching Opencode...${RESET}"
     echo ""
     opencode
