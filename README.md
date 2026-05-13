@@ -175,6 +175,34 @@ Copy the URL and paste it into `kooc` when prompted. Your URL gets saved automat
 **`opencode: command not found`**
 - Install OpenCode: `brew install opencode` or see [opencode.ai](https://opencode.ai)
 
+**OpenCode won't connect to your remote Ollama**
+- OpenCode needs a config file telling it to use OpenAI-compatible SDK for Ollama. Create `~/.config/opencode/opencode.json`:
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "ollama": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Ollama (local)",
+      "options": {
+        "baseURL": "${OLLAMA_HOST}/v1"
+      },
+      "models": {
+        "qwen3.6:35b": {
+          "name": "qwen3.6:35b"
+        },
+        "qwen3.6:35b-configured": {
+          "name": "qwen3.6:35b-configured"
+        }
+      }
+    }
+  }
+}
+```
+
+The `${OLLAMA_HOST}` variable is set automatically by `kooc` at launch — it points to your Kaggle tunnel URL. The `npm` field tells OpenCode to use `@ai-sdk/openai-compatible`, and the `models` section maps the models available on your remote Ollama instance so they appear in the picker.
+
 **`ollama: command not found`**
 - Install Ollama CLI: `brew install ollama` (the server doesn't need to run locally — just the CLI)
 

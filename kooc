@@ -233,7 +233,7 @@ case "$AGENT" in
   "OpenCode")
     echo -e "   ${GREY}Launching OpenCode...${RESET}"
     echo ""
-    ollama launch opencode --model "$SELECTED_MODEL"
+    opencode
     ;;
   "Claude Code")
     echo -e "   ${GREY}Launching Claude Code...${RESET}"
